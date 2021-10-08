@@ -4,7 +4,7 @@
 #
 Name     : compat-libvpx-soname6
 Version  : 1.11.0
-Release  : 23
+Release  : 24
 URL      : https://github.com/webmproject/libvpx/archive/v1.11.0/libvpx-1.11.0.tar.gz
 Source0  : https://github.com/webmproject/libvpx/archive/v1.11.0/libvpx-1.11.0.tar.gz
 Summary  : No detailed summary available
@@ -44,16 +44,13 @@ license components for the compat-libvpx-soname6 package.
 %setup -q -n libvpx-1.11.0
 cd %{_builddir}/libvpx-1.11.0
 %patch1 -p1
-pushd ..
-cp -a libvpx-1.11.0 buildavx2
-popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1633717412
+export SOURCE_DATE_EPOCH=1633718542
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -65,18 +62,8 @@ export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -fl
 %configure --disable-static || : ; CC=gcc CXX=g++ AR=ar STRIP=strip NM=nm ./configure --prefix=/usr --libdir=/usr/lib64 --target=x86_64-linux-gnu --disable-static --enable-libs --enable-vp8 --enable-vp9 --enable-runtime-cpu-detect --enable-shared --enable-webm-io --enable-experimental
 make  %{?_smp_mflags}  V=1 AS_FLAGS="-a AMD64"
 
-unset PKG_CONFIG_PATH
-pushd ../buildavx2/
-export CFLAGS="$CFLAGS -m64 -march=x86-64-v3"
-export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3"
-export FFLAGS="$FFLAGS -m64 -march=x86-64-v3"
-export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
-export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
-%configure --disable-static || : ; CC=gcc CXX=g++ AR=ar STRIP=strip NM=nm ./configure --prefix=/usr --libdir=/usr/lib64 --target=x86_64-linux-gnu --disable-static --enable-libs --enable-vp8 --enable-vp9 --enable-runtime-cpu-detect --enable-shared --enable-webm-io --enable-experimental
-make  %{?_smp_mflags}  V=1 AS_FLAGS="-a AMD64"
-popd
 %install
-export SOURCE_DATE_EPOCH=1633717412
+export SOURCE_DATE_EPOCH=1633718542
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-libvpx-soname6
 cp %{_builddir}/libvpx-1.11.0/LICENSE %{buildroot}/usr/share/package-licenses/compat-libvpx-soname6/4dbe7c1f3a1833a88333a7c282119323e9ef44fa
@@ -84,18 +71,10 @@ cp %{_builddir}/libvpx-1.11.0/third_party/googletest/src/LICENSE %{buildroot}/us
 cp %{_builddir}/libvpx-1.11.0/third_party/libwebm/LICENSE.TXT %{buildroot}/usr/share/package-licenses/compat-libvpx-soname6/59cd938fcbd6735b1ef91781280d6eb6c4b7c5d9
 cp %{_builddir}/libvpx-1.11.0/third_party/libyuv/LICENSE %{buildroot}/usr/share/package-licenses/compat-libvpx-soname6/f71908f9aaa4aee0f15f9983b6cf83791d18cfd7
 cp %{_builddir}/libvpx-1.11.0/third_party/x86inc/LICENSE %{buildroot}/usr/share/package-licenses/compat-libvpx-soname6/697c7d5a9839cf4160acd85431b0c58be874dba8
-pushd ../buildavx2/
-%make_install_v3
-/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/clear/optimized-elf/ %{buildroot}/usr/clear/filemap/filemap-%{name}
-popd
 %make_install
 ## Remove excluded files
 rm -f %{buildroot}/usr/bin/vpxdec
 rm -f %{buildroot}/usr/bin/vpxenc
-rm -f %{buildroot}/usr/clear/filemap/filemap-compat-libvpx-soname6
-rm -f %{buildroot}/usr/clear/optimized-elf/binac42b002a1c77dcad93134c629b442c12868e6d61c9411ba548f2bfea280d109
-rm -f %{buildroot}/usr/clear/optimized-elf/binae1f9cd91845b319a7bdc8517fe0da7b3acf981e724e02598428f9fbab93b75b
-rm -f %{buildroot}/usr/clear/optimized-elf/lib6323a7162887a88ba86e824a321ad9ab63efb2f44322eef380aff603e3435f6c
 rm -f %{buildroot}/usr/include/vpx/vp8.h
 rm -f %{buildroot}/usr/include/vpx/vp8cx.h
 rm -f %{buildroot}/usr/include/vpx/vp8dx.h
